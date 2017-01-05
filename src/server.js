@@ -13,6 +13,7 @@ const app = express();
 app.use((req, res) => {
   match({ routes, location: req.url }, (error, redirectLocation, renderProps) => {
     const store = configureStore();
+    const state = store.getState();
 
     if (redirectLocation) {
       return res.redirect(301, redirectLocation.pathname + redirectLocation.search);
@@ -32,13 +33,13 @@ app.use((req, res) => {
       </Provider>
     );
 
-    return res.end(renderHTML(componentHTML));
+    return res.end(renderHTML(componentHTML, state));
   });
 });
 
 const assetUrl = process.env.NODE_ENV !== 'production' ? 'http://localhost:8050' : '/';
 
-function renderHTML(componentHTML) {
+function renderHTML(componentHTML, initialState) {
   return `
     <!DOCTYPE html>
       <html>
@@ -47,6 +48,9 @@ function renderHTML(componentHTML) {
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <title>Hello React</title>
           <link rel="stylesheet" href="${assetUrl}/public/assets/styles.css">
+          <script type="application/javascript">
+            window.REDUX_INITIAL_STATE = ${JSON.stringify(initialState)};
+          </script>
       </head>
       <body>
         <div id="react-view">${componentHTML}</div>
