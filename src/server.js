@@ -2,6 +2,9 @@ import express  from 'express';
 import React    from 'react';
 import ReactDom from 'react-dom/server';
 
+import { Provider } from 'react-redux';
+import configureStore from './redux/configureStore';
+
 import { match, RouterContext } from 'react-router';
 import routes from './routes';
 
@@ -9,6 +12,8 @@ const app = express();
 
 app.use((req, res) => {
   match({ routes, location: req.url }, (error, redirectLocation, renderProps) => {
+    const store = configureStore();
+
     if (redirectLocation) {
       return res.redirect(301, redirectLocation.pathname + redirectLocation.search);
     }
@@ -21,7 +26,11 @@ app.use((req, res) => {
       return res.status(404).send('Not found');
     }
 
-    const componentHTML = ReactDom.renderToString(<RouterContext {...renderProps} />);
+    const componentHTML = ReactDom.renderToString(
+      <Provider store={store}>
+        <RouterContext {...renderProps} />
+      </Provider>
+    );
 
     return res.end(renderHTML(componentHTML));
   });
