@@ -1,10 +1,14 @@
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import Grid  from 'react-bootstrap/lib/Grid';
 import Nav from 'react-bootstrap/lib/Nav';
 import Navbar from 'react-bootstrap/lib/Navbar';
 import NavItem  from 'react-bootstrap/lib/NavItem';
-import HelloWorldPage from 'components/HelloWorldPage';
+
 import './bootstrap.css';
+
+const propTypes = {
+  children: PropTypes.node
+};
 
 class App extends Component {
   render() {
@@ -25,11 +29,13 @@ class App extends Component {
           </Navbar.Collapse>
         </Navbar>
         <Grid>
-          <HelloWorldPage />
+          {this.props.children}
         </Grid>
       </div>
     );
   }
 }
+
+App.propTypes = propTypes;
 
 export default App;
